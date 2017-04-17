@@ -55,7 +55,7 @@ For this problem, serialization is probably not crucial. The baseline implemetat
 serialization already runs fairly fast. You can probably get away without serialization here, unless
 you care a lot about speed.
 
-![Hyphenation runtimes](/imgs/hyphenation-results?raw=true "Runtime for each of the serialization options in the hyphenation example")
+![Hyphenation runtimes](/imgs/hyphenation-results.png?raw=true "Runtime for each of the serialization options in the hyphenation example")
 
 | format | runtime (s) | uncertainty (s) |
 | ------ | ----------- | --------------- |
