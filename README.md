@@ -47,6 +47,11 @@ Write a Python script that adds hyphenation breaks to English text, so that you 
 break a word for hyphenation. Use the algorithm created by Frank Liang, for which there is a [Python
 implementation by Ned Batchelder](https://nedbatchelder.com/code/modules/hyphenate.html).
 
+The algorithm involves parsing a large list of strings to build an object that contains two data
+structures, one of which is a trie-like thing consisting of nested dicts. Instead of parsing the
+strings and rebuilding the object each time the script is run, consider serializing the object (or
+its data structures).
+
 ## Serialization formats evaluated
 
 1. No serialization (baseline)
@@ -55,11 +60,7 @@ implementation by Ned Batchelder](https://nedbatchelder.com/code/modules/hyphena
 3. `msgpack`
 4. `yaml`
 
-## Verdict
-
-For this problem, serialization is probably not crucial. The baseline implemetation without
-serialization already runs fairly fast. You can probably get away without serialization here, unless
-you care a lot about speed.
+## Results
 
 ![Hyphenation runtimes](/imgs/hyphenation-results.png?raw=true "Runtime for each of the serialization options in the hyphenation example")
 
@@ -70,6 +71,12 @@ you care a lot about speed.
 | pickle | 0.0459 | 0.00174 | 173 |
 | msgpack | 0.0583 | 0.00059 | 64 |
 | yaml | 4.2091 | 0.04437 | 254 |
+
+## Verdict
+
+For this problem, serialization is probably not crucial. The baseline implemetation without
+serialization already runs fairly fast. You can probably get away without serialization here, unless
+you care a lot about speed.
 
 However, if you do care about speed and decide to serialize, `pickle` is the clear winner. It's the
 fastest option, about 32% faster than baseline, and requires zero additional code. `json` and
@@ -86,3 +93,4 @@ test your code, but be extra vigilant if you're serializing Python objects with 
 slow to be worthwhile, around 60x slower than baseline.
 
 `msgpack` has the smallest file size, but still larger than baseline.
+
