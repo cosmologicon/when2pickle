@@ -1,10 +1,13 @@
+# Benchmark various serialization options for the hyphenate example.
+# Outputs: input name, serialization format, runtime, 3-sigma uncertainty in runtime
+
 import time, subprocess, os, random, statistics, math
 
 N = 100
 
 # yaml not included here because it's just so ridiculously slow that I know I wouldn't use it.
 # You can add yaml, just give the script plenty of time to run.
-subdirs = ["baseline", "json", "pickle", "msgpack"]
+subdirs = ["baseline", "json", "pickle", "msgpack", "yaml"]
 
 inputs = [
 	["empty", b"", b""],

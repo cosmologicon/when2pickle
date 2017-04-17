@@ -1,5 +1,6 @@
 # when2pickle
-Demonstration of a good usage of the Python pickle module
+
+Answering the question: when is the right time to use the Python `pickle` module?
 
 # Introduction
 
@@ -16,11 +17,13 @@ Please make sure you understand these two caveats. I completely agree with them.
 
 Having said that, some people think these caveats mean you should never use `pickle`, and there I
 disagree. Yes `pickle` can be misused, but that doesn't mean it's impossible or even all that hard
-to use it well. If you think that it's not worth putting any thought into the tool you use, you
-should just avoid `pickle` at all costs to make sure you're not misusing it, then keep in mind that
-`pickle` has two big advantages over other serialization options in Python:
+to use it well. If you think that it's not worth putting any thought into the tool you use, just go
+ahead and avoid `pickle` at all costs to make sure you're not misusing it. If you're willing to
+think a little bit, however, here are the advantages `pickle` has over other serialization options
+in Python:
 
 1. It's fast.
+1. It's built in, so it's available everywhere.
 1. It requires you to write less custom serialization code. Less code means less chances for errors.
 Thus `pickle`, when used correctly, is less error-prone than other options used correctly.
 
@@ -28,10 +31,13 @@ Therefore I claim that if you're writing a Python program that requires some non
 that can be reconstructed if needed, and you care about speed or about avoiding bugs, then `pickle`
 is a good tool to consider.
 
-This repository contains examples of problems where I think it's appropriate to use `pickle`. For
-each problem, I implement several different solutions using different serialization modules. I'll
-measure runtime benchmarks, as well as give my subjective opinion on the additional code overhead
-required to use different solutions.
+This repository contains examples of problems where I think it's appropriate to consider `pickle`.
+For each problem, I implement several different solutions using different serialization modules.
+I'll measure runtime benchmarks, as well as give my subjective opinion on the additional code
+overhead required to use different solutions.
+
+All code is written in the latest version of Python available on Ubuntu (currently Python 3.5).
+Benchmarks are run on some laptop running Ubuntu.
 
 # Example: hyphenation
 
@@ -57,25 +63,26 @@ you care a lot about speed.
 
 ![Hyphenation runtimes](/imgs/hyphenation-results?raw=true "Runtime for each of the serialization options in the hyphenation example")
 
-| format | runtime (s) | uncertainty (s) |
-| ------ | ----------- | --------------- |
-| baseline | 0.0670 | 0.00083 |
-| json | 0.0556 | 0.00085 |
-| pickle | 0.0459 | 0.00174 |
-| msgpack | 0.0583 | 0.00059 |
-| yaml | 4.2091 | 0.04437 |
+| format | runtime (s) | uncertainty (s) | file size (kb) |
+| ------ | ----------- | --------------- | -------------- |
+| baseline | 0.0670 | 0.00083 | 34 |
+| json | 0.0556 | 0.00085 | 185 |
+| pickle | 0.0459 | 0.00174 | 173 |
+| msgpack | 0.0583 | 0.00059 | 64 |
+| yaml | 4.2091 | 0.04437 | 254 |
 
 However, if you do care about speed and decide to serialize, `pickle` is the clear winner. It's the
 fastest option, about 32% faster than baseline, and requires zero additional code. `json` and
-`msgpack`, in addition to being slower (17% and 13% slower than baseline), both require tweaking the
-internals of the `hyphenate` object. It's not a lot of additional code, but it's sort of ugly. I had
-to use `isinstance` to check the types in the deserialized data.
+`msgpack`, in addition to being slower (17% and 13% faster than baseline), both require tweaking the
+internals of the `hyphenate` object. It's not a lot of additional code, but it's the kind of code I
+hate to write. It's unpythonic: I had to use `isinstance` to check the types in the deserialized
+data.
 
-Furthermore, both `json` and `msgpack` failed silently before I added this tweak. It acted as if it
-had run correctly, but no hyphenation breaks were actually added. Of course you should always test
-your code, but be extra vigilant if you're serializing Python objects with `json` or `msgpack`.
+Furthermore, both `json` and `msgpack` failed silently before I added this tweak. Each one acted as
+if it had run correctly, but no hyphenation breaks were actually added. Of course you should always
+test your code, but be extra vigilant if you're serializing Python objects with `json` or `msgpack`.
 
-`yaml`, like `pickle`, requires no additional code, but it's completely unusable here, being far too
-slow, around 100x slower than other options.
+`yaml`, like `pickle`, requires no additional code, but it's completely unusable here. It's far too
+slow to be worthwhile, around 60x slower than baseline.
 
 `msgpack` has the smallest file size, but still larger than baseline.
